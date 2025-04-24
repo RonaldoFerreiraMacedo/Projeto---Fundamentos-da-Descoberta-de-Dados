@@ -73,7 +73,6 @@ df.groupby('Categoria')['Preco_Normal'].median().reset_index().sort_values(by='P
 """
 
 #Seu código aqui
-# df.groupby('Categoria')['Preco_Normal'].std().reset_index().sort_values(by='Preco_Normal', ascending=False)
 df.groupby('Categoria')['Preco_Normal'].agg(['mean', 'median', 'std']).sort_values(by='std', ascending=False)
 
 """Digite nesse campo o comportamento que você identificou.
