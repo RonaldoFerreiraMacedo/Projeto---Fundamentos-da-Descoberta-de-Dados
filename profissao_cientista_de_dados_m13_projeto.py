@@ -118,16 +118,25 @@ plt.show()
 
 """# 5 - Plote um gráfico de mapa interativo agrupando os dados por categoria, marca e trazendo a média de desconto."""
 
-desconto_marca = df.groupby('Marca')['Desconto'].mean().reset_index().sort_values(by='Desconto', ascending=False)
+# Troca NaN por 0 na coluna 'Desconto'
+df['Desconto'] = df['Desconto'].fillna(0)
 
-fig = px.bar(
-    desconto_marca,
-    x='Marca',
-    y='Desconto',
-    color='Marca',
-    title='Desconto Médio por Marca',
-    height=600
-)
+# 2. Agrupa e calcula a média
+df_grouped = df.groupby(['Categoria', 'Marca']).agg({'Desconto': 'mean'}).reset_index()
 
-fig.update_layout(xaxis_tickangle=-45)
-fig.show()
+# 3. Remove médias que ficaram 0
+df_grouped = df_grouped[df_grouped['Desconto'] > 0]
+
+# 4. Verifica se o DataFrame ficou vazio
+if df_grouped.empty:
+    print("Nenhuma categoria/marca tem desconto maior que 0. Nada para plotar.")
+else:
+    fig = px.treemap(
+        df_grouped,
+        path=['Categoria', 'Marca'],
+        values='Desconto',
+        color='Desconto',
+        color_continuous_scale='Viridis',
+        title='Média de Desconto por Categoria e Marca'
+    )
+    fig.show()
